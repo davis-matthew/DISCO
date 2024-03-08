@@ -19,9 +19,12 @@
 
 namespace llvm {
 
-class InstrumentationReductionPass : public PassInfoMixin<InstrumentationReductionPass> {
-  friend AnalysisInfoMixin<InstrumentationReductionPass>;
+class Disco : public PassInfoMixin<Disco> {
+  friend AnalysisInfoMixin<Disco>;
 public:
+
+  void insertStringSpellingChecks(Module &);
+
   PreservedAnalyses run(Module &, ModuleAnalysisManager &);
   static bool isRequired() { return true; }
 };
