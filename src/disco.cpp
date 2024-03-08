@@ -6,13 +6,14 @@ PreservedAnalyses Disco::run(Module &M, ModuleAnalysisManager &MAM) {
 
   // generate global data structure (dictionary) from replacements.txt
 
-  // wrap puts() or other print functions with something like:
+  // find all instances of puts() or other print functions and stick a call to our function on top:
+  
   
   /* 
-  void newPuts(char* s){
-    checkStringSpelling(s);
+    --> checkStringSpelling(s);
     puts(s);
-  }
+
+  
   void checkStringSpelling(char* s){
     for key in globaldictionary:
       if s.lowercase().find(key.lowercase()) != string::npos:
