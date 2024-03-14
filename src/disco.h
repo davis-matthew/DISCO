@@ -17,6 +17,9 @@
 #include "llvm/Pass.h"
 #include "llvm/Analysis/LoopInfo.h"
 
+#include <vector>
+#include <unordered_set>
+
 namespace llvm {
 
 class Disco : public PassInfoMixin<Disco> {
