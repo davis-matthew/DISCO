@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Pass in instrumented .ll as 1st arg
+# Pass in .bc or .ll as first argument
 
 HOME=$PWD
 INSTALLDIR="../llvm-project/build/install/"

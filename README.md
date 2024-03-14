@@ -21,3 +21,23 @@ cmake \
     ../llvm
 cmake --build . --parallel
 cmake --build . --target install
+
+# build pass
+mkdir build && cd build
+cmake ../
+make
+```
+
+## Usage:
+Setup LLVM in environment:
+```bash
+source ./env.sh
+```
+Create LLVM IR w/ Static C & C++ Standard Libraries:
+```bash
+clang++ -stdlib=libc++ -c -emit-llvm file.cpp
+```
+Add Spellchecking to Binary: 
+```bash
+clang transformed.bc spellcheck_map.c spellcheck.c
+```
