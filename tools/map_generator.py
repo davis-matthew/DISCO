@@ -10,7 +10,7 @@ def generate_cpp_code(input_file, output_file):
             value = values.split(',')[0]
             key = key.replace('"', '\\"')
             value = value.replace('"', '\\"')
-            output.write(f'    {{"{key}", "{value}"}},\n')
+            output.write(f'    {{"{key.lower()}", "{value.lower()}"}},\n')
         output.write("};\n")
 
 generate_cpp_code("replacements.txt", "../src/globalDictionary.cpp")
