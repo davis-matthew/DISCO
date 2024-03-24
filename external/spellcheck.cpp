@@ -5,7 +5,7 @@
 #include <sstream>
 #include <cstdint>
 
-extern std::unordered_map<std::string, std::string> spellcheck_dict;
+extern std::unordered_map<std::string, std::string> replacements_dictionary;
 extern uint64_t count_spellcheck_errors;
 
 void spellcheck_io(std::string &input) {
@@ -20,8 +20,8 @@ void spellcheck_io(std::string &input) {
  
     std::string token;
     while (std::getline(input_without_symbols_stringstream, token, ' ')) {
-        if (spellcheck_dict.find(token) != spellcheck_dict.end()) {
-            std::cerr << "[DISCO] Found token \"" << token << "\". Perhaps you meant \"" << spellcheck_dict[token] << "\"?" << std::endl; 
+        if (replacements_dictionary.find(token) != replacements_dictionary.end()) {
+            std::cerr << "[DISCO] Found token \"" << token << "\". Perhaps you meant \"" << replacements_dictionary[token] << "\"?" << std::endl; 
             count_spellcheck_errors++;
         }
     }

@@ -38,7 +38,7 @@ PreservedAnalyses Disco::run(Module &M, ModuleAnalysisManager &MAM) {
 
   std::vector<Type*> spellCheckParameters = {Type::getInt8PtrTy(globalContext)};
   FunctionType *spellCheckFuncType = FunctionType::get(Type::getVoidTy(globalContext), spellCheckParameters, false);
-  Function *spellCheckFunc = cast<Function>(M.getOrInsertFunction("checkStringSpelling", spellCheckFuncType).getCallee());
+  Function *spellCheckFunc = cast<Function>(M.getOrInsertFunction("spellcheck_io", spellCheckFuncType).getCallee());
 
   for(Function &F : M)
   for(BasicBlock &BB : F)
