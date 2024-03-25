@@ -21,20 +21,23 @@ PreservedAnalyses Disco::run(Module &M, ModuleAnalysisManager &MAM) {
 
   // Insert call to atexit(printSpellcheckStats)
   std::vector<Type*> spellCheckStatsParameters = {Type::getVoidTy(globalContext)};
-  FunctionType *spellCheckStatsFuncType = FunctionType::get(Type::getVoidType(globalContext), spellCheckStatsParameters, false);
-  Function *spellCheckStatsFunc = cast<Function>(M.getOrInsertFunction("printSpellcheckStats"), spellCheckStatsFuncType).getCallee();
+  FunctionType *spellCheckStatsFuncType = FunctionType::get(Type::getVoidTy(globalContext), spellCheckStatsParameters, false);
+  Function *spellCheckStatsFunc = cast<Function>(M.getOrInsertFunction(StringRef("printSpellcheckStats"), spellCheckStatsFuncType).getCallee());
   
   std::vector<Type*> atExitParameters = {PointerType::getUnqual(spellCheckStatsFuncType)};
-  FunctionType *atExitFuncType = FunctionType::get(Type::getVoidType(globalContext), atExitParameters, false);
-  Function *atExitFunc = cast<Function>(M.getOrInsertFunction("atexit"), atExitFuncType).getCallee();
+  FunctionType *atExitFuncType = FunctionType::get(Type::getVoidTy(globalContext), atExitParameters, false);
+  Function *atExitFunc = cast<Function>(M.getOrInsertFunction(StringRef("atexit"), atExitFuncType).getCallee());
 
-  CallInst *atExitSpellCheckStats = CallInst::Create(atExitFunc, spellCheckStatsFunc, 
-                                      M.getOrInsertFunction("main").begin().begin()); // Start of main
+  std::vector<Value*> atExitArgs;
+  atExitArgs.push_back(spellCheckStatsFunc);
+  IRBuilder<> builder(globalContext);
+  builder.SetInsertPoint(&(*(M.getFunction(StringRef("main"))->begin()->begin()))); // Start of main
+  CallInst *atExitSpellCheckStats = builder.CreateCall(atExitFunc, atExitArgs);
 
   // Insert call to checkStringSpelling above each puts() call
-  std::unordered_set<std::string> outputFunctions = ({
+  std::unordered_set<std::string> outputFunctions = {
     "@puts"
-  });
+  };
 
   std::vector<Type*> spellCheckParameters = {Type::getInt8PtrTy(globalContext)};
   FunctionType *spellCheckFuncType = FunctionType::get(Type::getVoidTy(globalContext), spellCheckParameters, false);
@@ -45,8 +48,12 @@ PreservedAnalyses Disco::run(Module &M, ModuleAnalysisManager &MAM) {
   for(Instruction &I: BB)
     if(CallInst* call = dyn_cast<CallInst>(&I)) {
       StringRef calledFuncName = call->getCalledFunction()->getName();
-      if(outputFunctions.find(calledFuncName.str()) != container.end())
-        CallInst *spellCheck = CallInst::Create(spellCheckFunc, call->getArgOperand(0), I);
+      if(outputFunctions.find(calledFuncName.str()) != outputFunctions.end()){
+        builder.SetInsertPoint(&I);
+        std::vector<Value*> spellCheckArgs;
+        spellCheckArgs.push_back(call->getArgOperand(0));
+        CallInst *spellCheck = builder.CreateCall(spellCheckFunc, atExitArgs);
+      }
     }
 
   return PreservedAnalyses::all();
