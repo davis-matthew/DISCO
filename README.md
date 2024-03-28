@@ -36,11 +36,15 @@ Setup LLVM in environment:
 ```bash
 source ./env.sh
 ```
-Create LLVM IR w/ Static C & C++ Standard Libraries:
+
+Create human-readable LLVM from a test file and run pass on it: 
 ```bash
-clang++ -stdlib=libc++ -c -emit-llvm file.cpp
+clang -emit-llvm -S test.c -o test.ll
+./test.sh test.ll
 ```
+
 Add Spellchecking to Binary: 
 ```bash
-clang transformed.bc spellcheck_map.c spellcheck.c
+clang++ test.ll-transformed.bc external/spellcheck.cpp external/dictionary.cpp -o transformed-binary
+./transformed-binary
 ```
