@@ -6,14 +6,15 @@
 #include <cstdint>
 
 extern std::unordered_map<std::string, std::string> replacements_dictionary;
-extern uint64_t count_spellcheck_errors;
+uint64_t count_spellcheck_errors = 0;
 
-void spellcheck_io(std::string &input) {
+extern "C" void spellcheck_io(const char* input_cstr) {
+    std::string input(input_cstr);
+    
     std::string input_without_symbols = std::regex_replace(input, std::regex("[,.\\/:\"-]"), " ");
-    int i = 0;
-    for (char &c : result) {
-        input_without_symbols[i] = std::tolower(c);
-        i++;
+    
+    for (size_t i = 0; i < input_without_symbols.length(); ++i) {
+        input_without_symbols[i] = std::tolower(input_without_symbols[i]);
     }
 
     std::istringstream input_without_symbols_stringstream(input_without_symbols);
@@ -27,6 +28,6 @@ void spellcheck_io(std::string &input) {
     }
 }
 
-void printSpellcheckStats() {
+extern "C" void printSpellcheckStats() {
     std::cerr << count_spellcheck_errors << " spellcheck errors found." << std::endl;
 }
