@@ -28,6 +28,9 @@ cmake ../
 make
 ```
 
+for mac use:
+```cmake .. -Dzstd_INCLUDE_DIR="path" -Dzstd_LIBRARY="path"```
+
 ## Usage:
 Setup LLVM in environment:
 ```bash
