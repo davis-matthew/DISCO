@@ -29,5 +29,5 @@ extern "C" void spellcheck_io(const char* input_cstr) {
 }
 
 extern "C" void printSpellcheckStats() {
-    std::cerr << count_spellcheck_errors << " spellcheck errors found." << std::endl;
+    std::cerr << "[DISCO] " << count_spellcheck_errors << " spellcheck errors found." << std::endl;
 }

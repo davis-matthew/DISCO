@@ -23,43 +23,49 @@ Find all instances of puts() or other print functions and stick a call to our fu
 PreservedAnalyses Disco::run(Module &M, ModuleAnalysisManager &MAM) {
   LLVMContext &globalContext = M.getContext();
 
-  // // Insert call to atexit(printSpellcheckStats)
-  // std::vector<Type*> spellCheckStatsParameters = {Type::getVoidTy(globalContext)};
-  // FunctionType *spellCheckStatsFuncType = FunctionType::get(Type::getVoidTy(globalContext), spellCheckStatsParameters, false);
-  // Function *spellCheckStatsFunc = cast<Function>(M.getOrInsertFunction(StringRef("printSpellcheckStats"), spellCheckStatsFuncType).getCallee());
   
-  // std::vector<Type*> atExitParameters = {PointerType::getUnqual(spellCheckStatsFuncType)};
-  // FunctionType *atExitFuncType = FunctionType::get(Type::getVoidTy(globalContext), atExitParameters, false);
-  // Function *atExitFunc = cast<Function>(M.getOrInsertFunction(StringRef("atexit"), atExitFuncType).getCallee());
 
-  // std::vector<Value*> atExitArgs;
-  // atExitArgs.push_back(spellCheckStatsFunc);
   IRBuilder<> builder(globalContext);
-  // builder.SetInsertPoint(&(*(M.getFunction(StringRef("main"))->begin()->begin()))); // Start of main
-  // CallInst *atExitSpellCheckStats = builder.CreateCall(atExitFunc, atExitArgs);
 
-  // // Insert call to checkStringSpelling above each puts() call
+  // Insert call to checkStringSpelling above each call to a function in this set
   std::unordered_set<std::string> outputFunctions = {
     "puts"
+  };
+
+  std::unordered_set<std::string> exitFunctions = {
+    "exit"
   };
 
   std::vector<Type*> spellCheckParameters = {Type::getInt8PtrTy(globalContext)};
   auto *spellCheckFuncType = FunctionType::get(Type::getVoidTy(globalContext), {Type::getInt8PtrTy(globalContext)}, false);
   auto *spellCheckFunc = cast<Function>(M.getOrInsertFunction("spellcheck_io", spellCheckFuncType).getCallee());
 
+  std::vector<Type*> spellCheckStatsParameters;
+  auto *spellCheckStatsFuncType = FunctionType::get(Type::getVoidTy(globalContext), spellCheckStatsParameters, false);
+  auto *spellCheckStatsFunc = cast<Function>(M.getOrInsertFunction(StringRef("printSpellcheckStats"), spellCheckStatsFuncType).getCallee());
+
   for(Function &F : M)
   for(BasicBlock &BB : F)
   for(Instruction &I: BB)
     if(CallInst* call = dyn_cast<CallInst>(&I)) {
       StringRef calledFuncName = call->getCalledFunction()->getName();
-      std::cout << calledFuncName.str() << "\n";
-      if(outputFunctions.find(calledFuncName.str()) != outputFunctions.end()){
+      if(outputFunctions.find(calledFuncName.str()) != outputFunctions.end()) {
         builder.SetInsertPoint(&I);
         std::vector<Value*> spellCheckArgs;
         spellCheckArgs.push_back(call->getArgOperand(0));
-        CallInst *spellCheck = builder.CreateCall(spellCheckFunc, spellCheckArgs);      }
+        CallInst *spellCheck = builder.CreateCall(spellCheckFunc, spellCheckArgs);      
+      }
+      else if(exitFunctions.find(calledFuncName.str()) != exitFunctions.end()) {
+        builder.SetInsertPoint(&I);
+        std::vector<Value*> spellCheckStatsArgs;
+        CallInst *spellCheckStats = builder.CreateCall(spellCheckStatsFunc, spellCheckStatsArgs);
+      }
     }
-
+    else if(F.getName().str() == "main" && isa<ReturnInst>(I)) {
+      builder.SetInsertPoint(&I);
+      std::vector<Value*> spellCheckStatsArgs;
+      CallInst *spellCheckStats = builder.CreateCall(spellCheckStatsFunc, spellCheckStatsArgs);
+    }
   return PreservedAnalyses::all();
 }
 
