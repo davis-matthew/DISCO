@@ -27,11 +27,12 @@ PreservedAnalyses Disco::run(Module &M, ModuleAnalysisManager &MAM) {
 
   IRBuilder<> builder(globalContext);
 
-  // Insert call to checkStringSpelling above each call to a function in this set
+  // Insert call to spellcheck_io above each call to a function in this set
   std::unordered_set<std::string> outputFunctions = {
     "puts"
   };
 
+  // Insert call to printSpellcheckStats above each call to a function in this set
   std::unordered_set<std::string> exitFunctions = {
     "exit"
   };
@@ -61,7 +62,7 @@ PreservedAnalyses Disco::run(Module &M, ModuleAnalysisManager &MAM) {
         CallInst *spellCheckStats = builder.CreateCall(spellCheckStatsFunc, spellCheckStatsArgs);
       }
     }
-    else if(F.getName().str() == "main" && isa<ReturnInst>(I)) {
+    else if(F.getName().str() == "main" && isa<ReturnInst>(I)) { // We also insert on main returns
       builder.SetInsertPoint(&I);
       std::vector<Value*> spellCheckStatsArgs;
       CallInst *spellCheckStats = builder.CreateCall(spellCheckStatsFunc, spellCheckStatsArgs);
