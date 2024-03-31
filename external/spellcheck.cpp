@@ -8,11 +8,12 @@
 extern std::unordered_map<std::string, std::string> replacements_dictionary;
 uint64_t count_spellcheck_errors = 0;
 
+// Replace all instances of 'target' in a string with 'replacement'
 void replaceAll(std::string &str, const std::string &target, const std::string &replacement) {
     size_t index = 0;
     while((index = str.find(target, index)) != std::string::npos) {
         str.replace(index, target.length(), replacement);
-        index += replacement.length(); // Handles case if 'to' is a substring of 'from'
+        index += replacement.length();
     }
 }
 
