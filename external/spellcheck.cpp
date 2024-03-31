@@ -39,7 +39,7 @@ extern "C" void spellcheck_io(const char* input_cstr) {
     }
     
     if(replacementMade) {
-        std::cerr << "[DISCO] Detected spelling mistakes in the upcoming print statement. Probably meant:\n" << input << "\n\n"; 
+        std::cerr << "[DISCO] Detected spelling/grammar mistakes in the upcoming print statement. Probably meant:\n" << input << "\n\n"; 
     }
 }
 
