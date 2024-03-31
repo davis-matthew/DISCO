@@ -8,6 +8,14 @@
 extern std::unordered_map<std::string, std::string> replacements_dictionary;
 uint64_t count_spellcheck_errors = 0;
 
+void replaceAll(std::string &str, const std::string &target, const std::string &replacement) {
+    size_t index = 0;
+    while((index = str.find(target, index)) != std::string::npos) {
+        str.replace(index, target.length(), replacement);
+        index += replacement.length(); // Handles case if 'to' is a substring of 'from'
+    }
+}
+
 extern "C" void spellcheck_io(const char* input_cstr) {
     std::string input(input_cstr);
     
@@ -19,12 +27,19 @@ extern "C" void spellcheck_io(const char* input_cstr) {
 
     std::istringstream input_without_symbols_stringstream(input_without_symbols);
  
+    bool replacementMade = false;
     std::string token;
+    std::vector<std::pair<uint64_t,uint64_t>> replacements;
     while (std::getline(input_without_symbols_stringstream, token, ' ')) {
         if (replacements_dictionary.find(token) != replacements_dictionary.end()) {
-            std::cerr << "[DISCO] Found token \"" << token << "\". Perhaps you meant \"" << replacements_dictionary[token] << "\"?" << std::endl; 
+            replaceAll(input, token, replacements_dictionary[token]);
             count_spellcheck_errors++;
+            replacementMade = true;
         }
+    }
+    
+    if(replacementMade) {
+        std::cerr << "[DISCO] Detected spelling mistakes in the upcoming print statement. Probably meant:\n" << input << "\n\n"; 
     }
 }
 
