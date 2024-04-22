@@ -1,13 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void other() {
-    exit(0);
-}
-
 int main() {
-    puts("i wanna be 1nd");
-    puts("i love this country ameria");
-    puts("there is nothing to do in heidelburg, i am pretty sure");
+    puts("I am taking CS 6390: programming slanguages");
+    puts("Dr. Sarkar is the profesor of the course");
+    puts("We are currently giving a very good presentaion to the class");
     return 0;
 }

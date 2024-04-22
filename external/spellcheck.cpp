@@ -33,17 +33,19 @@ extern "C" void spellcheck_io(const char* input_cstr) {
     std::vector<std::pair<uint64_t,uint64_t>> replacements;
     while (std::getline(input_without_symbols_stringstream, token, ' ')) {
         if (replacements_dictionary.find(token) != replacements_dictionary.end()) {
-            replaceAll(input, token, replacements_dictionary[token]);
+            replaceAll(input, token, "\033[1;32m"+replacements_dictionary[token]+"\033[0m");
             count_spellcheck_errors++;
             replacementMade = true;
         }
     }
     
     if(replacementMade) {
-        std::cerr << "[DISCO] Detected spelling/grammar mistakes in the upcoming print statement. Probably meant:\n" << input << "\n\n"; 
+        std::cerr << "\n\t----------\n";
+        std::cerr << "\t[DISCO] Detected spelling/grammar mistakes in the upcoming print statement. Probably meant:\n\t" << input << "\n";
+        std::cerr << "\t----------\n\n"; 
     }
 }
 
 extern "C" void printSpellcheckStats() {
-    std::cerr << "[DISCO] " << count_spellcheck_errors << " spellcheck errors found." << std::endl;
+    std::cerr << "\n\033[1;31m[DISCO] " << count_spellcheck_errors << " spellcheck errors found.\033[0m" << std::endl;
 }
