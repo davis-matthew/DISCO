@@ -48,3 +48,9 @@ Add Spellchecking to Binary:
 clang++ test.ll-transformed.bc external/spellcheck.cpp external/dictionary.cpp -o transformed-binary
 ./transformed-binary
 ```
+
+Run Binary:
+```bash
+./transformed-binary
+```
+![image](https://github.com/davis-matthew/DISCO/assets/45373823/f2175e8b-07df-4b68-a19d-d7ae9616eb3d)
