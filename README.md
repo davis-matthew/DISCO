@@ -1,5 +1,9 @@
-# DISCO:
+# DISCO: Dependent-type Inspection for String Correctness On-the-fly
 
+We propose DISCO, a dependently typed string and runtime LLVM compiler pass that detects string formatting issues, such as typos. Our approach can be extended to ensure form fields such as emails, phone numbers, passwords, dates, etc. are valid based on universal formatting conventions. Whenever a string deviates from the expected pattern, the runtime will identify this as a mismatch. This helps reduce usability issues arising from cultural variations in input and output validation. More details can be found in the [paper](https://github.com/davis-matthew/DISCO/blob/main/assets/final-report.pdf).
+
+![image](https://raw.githubusercontent.com/davis-matthew/DISCO/main/assets/logic.png)
+![image](https://raw.githubusercontent.com/davis-matthew/DISCO/main/assets/results.png)
 
 ## Setup:
 ```bash
@@ -53,4 +57,3 @@ Run Binary:
 ```bash
 ./transformed-binary
 ```
-![image](https://github.com/davis-matthew/DISCO/assets/45373823/f2175e8b-07df-4b68-a19d-d7ae9616eb3d)
